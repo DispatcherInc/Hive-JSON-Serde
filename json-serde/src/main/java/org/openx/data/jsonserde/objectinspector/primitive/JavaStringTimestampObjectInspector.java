@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.AbstractPrimitiveJavaObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.SettableTimestampObjectInspector;
+import org.openx.data.jsonserde.json.JSONObject;
+import org.openx.data.jsonserde.json.JSONException;
 
 /**
  * A timestamp that is stored in a String
@@ -69,7 +71,14 @@ public class JavaStringTimestampObjectInspector extends AbstractPrimitiveJavaObj
     public Timestamp getPrimitiveJavaObject(Object o) {
          if(o instanceof String) {
            return ParsePrimitiveUtils.parseTimestamp((String)o); 
-        } else {
+        } else if(o instanceof JSONObject && ((JSONObject)o).has("$numberlong")) {
+            try {          
+                return ParsePrimitiveUtils.parseTimestamp(((JSONObject)o).getString("$numberlong"));             
+            } catch(JSONException ex) {
+                return ((Timestamp) o);
+            }
+        }
+        else {
            return ((Timestamp) o);
         }
     }

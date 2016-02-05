@@ -52,6 +52,11 @@ public class ParsePrimitiveUtils {
     public static Timestamp parseTimestamp(String s) {
         final String sampleUnixTimestampInMs = "1454612111000";
 
+        if(s.indexOf('.') == 1 && s.indexOf('e') > 0) {
+            Long l = (Long)((long)(Double.parseDouble(s)));
+            s = l.toString();
+        }
+
         Timestamp value;
         if (s.indexOf(':') > 0) {
             value = Timestamp.valueOf(s);

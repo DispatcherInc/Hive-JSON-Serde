@@ -62,7 +62,14 @@ public class JavaStringTimestampObjectInspector extends AbstractPrimitiveJavaObj
         
         if(o instanceof String) {
            return new TimestampWritable(ParsePrimitiveUtils.parseTimestamp((String)o)); 
-        } else {
+        } else if(o instanceof JSONObject && ((JSONObject)o).has("$numberlong")) {
+            try {          
+                return new TimestampWritable(ParsePrimitiveUtils.parseTimestamp(((JSONObject)o).getString("$numberlong")));             
+            } catch(JSONException ex) {
+                return new TimestampWritable(((Timestamp) o));
+            }
+        }
+        else {
           return new TimestampWritable(((Timestamp) o));
         }
     }
